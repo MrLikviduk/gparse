@@ -1,0 +1,10 @@
+.btn:focus,.btn:active {
+    outline: none !important;
+    box-shadow: none;
+}
+.btn {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
