@@ -30,9 +30,7 @@
                                 <td>
                                     @if ($role->name !== 'admin' && !($role->name === 'co-admin' && !Auth::user()->hasRole('admin')))
                                         @if ($role->name !== 'user')
-                                            {!! Form::open(['route' => ['admin.users.remove-role', $user->id, $role->id], 'method' => 'PATCH', 'class' => 'd-inline']) !!}
-                                            <button class="btn btn-danger btn-sm" onclick="return confirm('{{ __('Are you sure you want to remove role ' . $role->name . ' from ' . $user->name . '?') }}')">{{ __('Remove') }}</button>
-                                            {!! Form::close() !!}
+                                            <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modalRemoveRole" data-href="{{ route('admin.users.remove-role', [$user->id, $role->id]) }}" data-user-name="{{ $user->name }}" data-role-name="{{ $role->name }}">{{ __('Remove') }}</button>
                                         @endif
                                         <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalAddRole" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}">{{ __('Add role') }}</button>
                                     @endif
@@ -70,7 +68,27 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Cancel') }}</button>
-                    <button type="submit" class="btn btn-primary">{{ __('Add role') }}</button>
+                    <button type="submit" class="btn btn-primary">{{ __('Add') }}</button>
+                </div>
+                {!! Form::close() !!}
+            </div><!-- /.модальное окно-Содержание -->
+        </div><!-- /.модальное окно-диалог -->
+    </div><!-- /.модальное окно -->
+    <div class="modal fade" id="modalRemoveRole">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                {!! Form::open(['route' => ['admin.users.remove-role', 0, 0], 'method' => 'PATCH']) !!}
+                <div class="modal-header">
+                    <h4 class="modal-title">{{ __('Remove role') }}</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="user_id">
+                    <input type="hidden" name="role_id">
+                    <p>{{ __('Are you sure you want to remove role ') }} <span data-rolename></span> {{ __(' from ') }} <span data-username></span>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-danger">{{ __('Remove') }}</button>
                 </div>
                 {!! Form::close() !!}
             </div><!-- /.модальное окно-Содержание -->
@@ -82,6 +100,16 @@
             let user_id = $(e.relatedTarget).data('userId'), user_name = $(e.relatedTarget).data('userName');
             add_role_form.find('span[data-username]').text(user_name);
             add_role_form.find('input[name=user_id]').val(user_id);
+        });
+
+        let remove_role_form = $("#modalRemoveRole");
+        remove_role_form.on('show.bs.modal', function (e) {
+            let user_name = $(e.relatedTarget).data('userName');
+            let role_name = $(e.relatedTarget).data('roleName');
+            remove_role_form.find('span[data-username]').text(user_name);
+            remove_role_form.find('span[data-rolename]').text(role_name);
+            remove_role_form.find('form').attr('action', $(e.relatedTarget).data('href'));
+            console.log(remove_role_form.find('form'));
         });
 
         function tableSearch(input) {
@@ -104,8 +132,8 @@
                 } else {
                     table.rows[i].style.display = "none";
                 }
-
             }
         }
     </script>
+
 @endsection

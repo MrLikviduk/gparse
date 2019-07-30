@@ -24,24 +24,47 @@
                                 <a href="https://vk.com/club{{ $group->id_vk }}" target="_blank">
                                     {{ $group->name }}
                                 </a>
-                                {!! Form::open(['route' => ['groups.destroy', $group->id], 'method' => 'DELETE', 'class' => 'd-inline']) !!}
-                                <button class="btn btn-danger py-0" onclick="return confirm('{{ __('Are you sure you want to delete the group?') }}')">{{ __('Delete') }}</button>
-                                {!! Form::close() !!}
+                                <button class="btn btn-danger py-0" data-group-name="{{ $group->name }}" data-toggle="modal" data-target="#modalDeleteGroup" data-href="{{ route('groups.destroy', [$group->id]) }}">{{ __('Delete') }}</button>
                             </li>
                         @endforeach
                     </ul>
                 @endforeach
-                <script>
-                    let buttons = $(".js-show-or-hide-groups-btn");
-                    buttons.css('text-decoration', 'none');
-                    buttons.click(function (e) {
-                        e.preventDefault();
-                        let list = $("#ulGroups" + this.dataset.typeId);
-                        list.toggleClass('d-none');
-                        $(this).html(list.hasClass('d-none') ? '{{ __('Show list') }}' : '{{ __('Hide list') }}');
-                    });
-                </script>
             </div>
         </div>
     </div>
+    <div class="modal fade" id="modalDeleteGroup">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                {!! Form::open(['method' => 'DELETE']) !!}
+                <div class="modal-header">
+                    <h4 class="modal-title">{{ __('Delete group') }}</h4>
+                </div>
+                <div class="modal-body">
+                    <p>{{ __('Are you sure you want to delete group') }} <span data-groupname></span>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-danger">{{ __('Delete') }}</button>
+                </div>
+                {!! Form::close() !!}
+            </div><!-- /.модальное окно-Содержание -->
+        </div><!-- /.модальное окно-диалог -->
+    </div>
+    <script>
+        let remove_group_form = $("#modalDeleteGroup");
+        remove_group_form.on('show.bs.modal', function (e) {
+            let group_name = $(e.relatedTarget).data('groupName');
+            remove_group_form.find('span[data-groupname]').text(group_name);
+            remove_group_form.find('form').attr('action', $(e.relatedTarget).data('href'));
+        });
+
+        let buttons = $(".js-show-or-hide-groups-btn");
+        buttons.css('text-decoration', 'none');
+        buttons.click(function (e) {
+            e.preventDefault();
+            let list = $("#ulGroups" + this.dataset.typeId);
+            list.toggleClass('d-none');
+            $(this).html(list.hasClass('d-none') ? '{{ __('Show list') }}' : '{{ __('Hide list') }}');
+        });
+    </script>
 @endsection

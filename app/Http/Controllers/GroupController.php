@@ -35,6 +35,7 @@ class GroupController extends Controller
     public function store(StoreGroupRequest $request)
     {
         $id_vk = explode('/', parse_url($request->get('id_vk'), PHP_URL_PATH))[1];
+        $id_vk = preg_replace('[^public(\d+)$]s', '$1', $id_vk);
         $api = new VKApiClient;
         try {
             $id_vk = $api->groups()->getById(config('vkapi.access_token'), [

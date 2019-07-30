@@ -18,7 +18,7 @@ class CreateGroupsTable extends Migration
             $table->bigInteger('id_vk');
             $table->bigInteger('type_id')->unsigned();
             $table->timestamps();
-            $table->foreign('type_id')->references('id')->on('types');
+            $table->foreign('type_id')->references('id')->on('types')->onDelete('cascade');
         });
     }
 

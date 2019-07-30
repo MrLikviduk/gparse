@@ -94,7 +94,7 @@ class TypeController extends Controller
         try {
             $type->delete();
         } catch (\Throwable $e) {
-            echo $e;
+            dd($e);
         }
 
         return redirect()->route('types.index');

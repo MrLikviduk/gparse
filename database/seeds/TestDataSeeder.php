@@ -76,7 +76,14 @@ class TestDataSeeder extends Seeder
         ]);
 
         for ($i = 0; $i < 20; $i++) {
-            $data = json_decode(file_get_contents('https://uinames.com/api/?region=united+states&ext'));
+            try {
+                $data = json_decode(file_get_contents('https://uinames.com/api/?region=united+states&ext'));
+            } catch (Throwable $e) {
+                $data = json_encode([
+                    'name' => 'John',
+                    'email' => Str::random(10) . '@gmail.com'
+                ]);
+            }
             $user = User::create([
                 'name' => $data->name,
                 'email' => $data->email,
